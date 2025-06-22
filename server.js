@@ -16,8 +16,13 @@ const app = express();
 app.use(cors());
 const port = 3000;
 
-// Serve static files from the root directory (for index.html)
-app.use(express.static(path.join(__dirname)));
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Handle root route to serve index.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Set up storage for uploaded files in memory
 const storage = multer.memoryStorage();
