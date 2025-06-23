@@ -1,97 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Hosting</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f0f2f5;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-      }
-      .container {
-        background-color: white;
-        padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        text-align: center;
-      }
-      h1 {
-        color: #333;
-      }
-      input[type='file'] {
-        margin-top: 1rem;
-      }
-      button {
-        margin-top: 1rem;
-        padding: 0.5rem 1rem;
-        border: none;
-        background-color: #007bff;
-        color: white;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      button:hover {
-        background-color: #0056b3;
-      }
-      #image-url {
-        margin-top: 1rem;
-        width: 100%;
-        padding: 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        input[type="file"] {
+            margin-top: 1rem;
+        }
+        button {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #image-url {
+            margin-top: 1rem;
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="container">
-      <h1>Upload Image</h1>
-      <input type="file" id="image-file" accept="image/*" />
-      <button onclick="uploadImage()">Upload</button>
-      <div id="url-container" style="display: none">
-        <p>Image URL:</p>
-        <input type="text" id="image-url" readonly />
-      </div>
+        <h1>Upload Image</h1>
+        <input type="file" id="image-file" accept="image/*">
+        <button onclick="uploadImage()">Upload</button>
+        <div id="url-container" style="display: none;">
+            <p>Image URL:</p>
+            <input type="text" id="image-url" readonly>
+        </div>
     </div>
 
     <script>
-      async function uploadImage() {
-        const fileInput = document.getElementById('image-file');
-        const file = fileInput.files[0];
-        if (!file) {
-          alert('Please select an image to upload.');
-          return;
+        async function uploadImage() {
+            const fileInput = document.getElementById('image-file');
+            const file = fileInput.files[0];
+            if (!file) {
+                alert('Please select an image to upload.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', file);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    const imageUrlInput = document.getElementById('image-url');
+                    const urlContainer = document.getElementById('url-container');
+                    imageUrlInput.value = result.url;
+                    urlContainer.style.display = 'block';
+                } else {
+                    alert(`Error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Upload failed:', error);
+                alert('Upload failed. See console for details.');
+            }
         }
-
-        const formData = new FormData();
-        formData.append('image', file);
-
-        try {
-          const response = await fetch('/upload', {
-            method: 'POST',
-            body: formData,
-          });
-
-          const result = await response.json();
-
-          if (response.ok) {
-            const imageUrlInput = document.getElementById('image-url');
-            const urlContainer = document.getElementById('url-container');
-            imageUrlInput.value = result.url;
-            urlContainer.style.display = 'block';
-          } else {
-            alert(`Error: ${result.error}`);
-          }
-        } catch (error) {
-          console.error('Upload failed:', error);
-          alert('Upload failed. See console for details.');
-        }
-      }
     </script>
-  </body>
+</body>
 </html>
